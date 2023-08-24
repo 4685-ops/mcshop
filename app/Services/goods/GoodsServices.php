@@ -88,7 +88,7 @@ class GoodsServices extends BaseService
 
     public function getGoodsProduct($goods_id)
     {
-        return GoodsProduct::query()->where("goods_id",$goods_id)->get();
+        return GoodsProduct::query()->where("goods_id", $goods_id)->get();
     }
 
     public function getGoodsIssue(int $page = 1, int $limit = 4)
@@ -96,7 +96,7 @@ class GoodsServices extends BaseService
         return Issue::query()->forPage($page, $limit)->get();
     }
 
-    public function saveFootprint($userId,$goodsId): bool
+    public function saveFootprint($userId, $goodsId): bool
     {
         $footprint = new Footprint();
         $footprint->fill(['user_id' => $userId, 'goods_id' => $goodsId]);
@@ -124,4 +124,12 @@ class GoodsServices extends BaseService
         }
         return $query;
     }
+
+    public function getGoodsListByIds($goodIds)
+    {
+        return Goods::query()->where("deleted", 0)
+            ->whereIn("id",$goodIds)
+            ->get();
+    }
+
 }

@@ -42,4 +42,5 @@ Route::get('coupon/receive', '\App\Http\Controllers\Wx\CouponController@receive'
 
 # 营销模块-团购
 Route::get('groupon/list', '\App\Http\Controllers\Wx\GrouponController@list'); //团购列表
+Route::get('groupon/test', '\App\Http\Controllers\Wx\GrouponController@test'); //团购列表
 Route::get('home/redirectShareUrl', '\App\Http\Controllers\Wx\HomeController@redirectShareUrl')->name('home.redirectShareUrl');
