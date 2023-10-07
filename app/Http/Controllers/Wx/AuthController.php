@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Wx;
 
 use App\CodeResponse;
+use App\Exceptions\BusinessException;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserServices;
@@ -14,6 +15,9 @@ use Illuminate\Support\Facades\Validator;
 
 class AuthController extends WxController
 {
+    /**
+     * @throws BusinessException
+     */
     public function register(Request $request)
     {
         // 获取参数
@@ -32,18 +36,19 @@ class AuthController extends WxController
 
         }
         //检查用户是否存在
-        $user = (new UserServices())->getByUsername($username);
+        $user = UserServices::getInstance()->getByUsername($username);
         if (!is_null($user)) {
             return $this->fail(CodeResponse::AUTH_NAME_REGISTERED);
 
         }
 
-        $user = (new UserServices())->getByMobile($mobile);
+        $user = UserServices::getInstance()->getByMobile($mobile);
         if (!is_null($user)) {
             return $this->fail(CodeResponse::AUTH_MOBILE_REGISTERED);
         }
-        // 验证码是否正确
 
+        // 验证码是否正确
+        UserServices::getInstance()->checkCaptcha($mobile, $code);
 
         // 写入用户表
         $user = new User();
@@ -86,38 +91,27 @@ class AuthController extends WxController
 
         }
         // 验证手机号是否注册
-        $user = (new UserServices())->getByMobile($mobile);
+        $user = UserServices::getInstance()->getByMobile($mobile);
         if (!is_null($user)) {
             return $this->fail(CodeResponse::AUTH_MOBILE_REGISTERED);
         }
 
-        $code = random_int(10000, 99999);
-
         //防刷验证十分钟一次   一天只能请求10次
-
-        $lock = Cache::add('register_captcha_lock_' . $mobile, 1, 60);
+        $lock = Cache::add('register_captcha_lock_'.$mobile, 1, 60);
         if (!$lock) {
             return $this->fail(CodeResponse::AUTH_CAPTCHA_FREQUENCY);
 
         }
+        $isPass = UserServices::getInstance()->checkMobileSendCaptchaCount($mobile);
 
-        $countKey = 'register_captcha_count_' . $mobile;
-        if (Cache::has($countKey)) {
-            $count = Cache::increment($countKey);
-
-            if ($count > 10) {
-                return $this->fail(CodeResponse::AUTH_CAPTCHA_FREQUENCY);
-            }
-        } else {
-            Cache::put($countKey, 1, Carbon::tomorrow()->diffInSeconds(now()));
+        if (!$isPass) {
+            return $this->fail(CodeResponse::AUTH_CAPTCHA_FREQUENCY, "验证码当天发送最多10条");
         }
 
-
-        // 保存手机号码与验证码关系
-        Cache::put('register_captcha_' . $mobile, $code, 600);
+        $code = UserServices::getInstance()->setCaptcha($mobile);
 
         // 发送短信
-        (new UserServices())->sendCaptchaMsg($mobile, $code);
+        UserServices::getInstance()->sendCaptchaMsg($mobile, $code);
 
         return $this->success();
     }

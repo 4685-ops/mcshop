@@ -52,4 +52,13 @@ class AuthTest extends TestCase
         $ret = $response->getOriginalContent();
         $this->assertEquals(707, $ret['errno']);
     }
+
+    public function testRegCaptcha()
+    {
+        $response = $this->post('/wx/auth/regCaptcha', [
+            'mobile' => '15751150235',
+        ]);
+        // 断言
+        $response->assertJson(['errno' => 0, 'errmsg' => '成功']);
+    }
 }
