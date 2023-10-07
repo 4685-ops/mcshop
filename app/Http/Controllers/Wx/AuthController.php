@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Wx;
 
+use App\CodeResponse;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Services\UserServices;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
 
-class AuthController extends Controller
+class AuthController extends WxController
 {
     public function register(Request $request)
     {
@@ -22,21 +23,24 @@ class AuthController extends Controller
         $code = $request->input('code');
         // 验证参数是否为空
         if (empty($username) || empty($password) || empty($mobile) || empty($code)) {
-            return ['errno' => 401, 'errmsg' => '参数不对'];
+            return $this->fail(CodeResponse::PARAM_ILLEGAL);
         }
         // 验证手机号码格式
         $validator = Validator::make(['mobile' => $mobile], ['mobile' => 'regex:/^1[0-9]{10}$/']);
         if ($validator->fails()) {
-            return ['errno' => 707, 'errmsg' => '手机号码格式不正确'];
+            return $this->fail(CodeResponse::AUTH_INVALID_MOBILE);
+
         }
         //检查用户是否存在
         $user = (new UserServices())->getByUsername($username);
         if (!is_null($user)) {
-            return ['errno' => 704, 'errmsg' => '用户名已注册'];
+            return $this->fail(CodeResponse::AUTH_NAME_REGISTERED);
+
         }
+
         $user = (new UserServices())->getByMobile($mobile);
         if (!is_null($user)) {
-            return ['errno' => 705, 'errmsg' => '手机号已注册'];
+            return $this->fail(CodeResponse::AUTH_MOBILE_REGISTERED);
         }
         // 验证码是否正确
 
@@ -78,30 +82,32 @@ class AuthController extends Controller
         // 验证手机号码格式
         $validator = Validator::make(['mobile' => $mobile], ['mobile' => 'regex:/^1[0-9]{10}$/']);
         if ($validator->fails()) {
-            return ['errno' => 707, 'errmsg' => '手机号码格式不正确'];
+            return $this->fail(CodeResponse::AUTH_INVALID_MOBILE);
+
         }
         // 验证手机号是否注册
         $user = (new UserServices())->getByMobile($mobile);
         if (!is_null($user)) {
-            return ['errno' => 705, 'errmsg' => '手机号已注册'];
+            return $this->fail(CodeResponse::AUTH_MOBILE_REGISTERED);
         }
 
         $code = random_int(10000, 99999);
 
 
-        //防刷验证 一分钟一次   一天只能请求10次
+        //防刷验证十分钟一次   一天只能请求10次
 
-        $lock = Cache::add('register_captcha_lock_'.$mobile, 1, 600);
+        $lock = Cache::add('register_captcha_lock_' . $mobile, 1, 60);
         if (!$lock) {
-            return ['errno' => 702, 'errmsg' => '验证码未超过1分钟，不能发送'];
+            return $this->fail(CodeResponse::AUTH_CAPTCHA_FREQUENCY);
+
         }
 
-        $countKey = 'register_captcha_count_'.$mobile;
+        $countKey = 'register_captcha_count_' . $mobile;
         if (Cache::has($countKey)) {
             $count = Cache::increment($countKey);
 
             if ($count > 10) {
-                return ['errno' => 702, 'errmsg' => '也只能当天发送不能超过10次'];
+                return $this->fail(CodeResponse::AUTH_CAPTCHA_FREQUENCY);
             }
         } else {
             Cache::put($countKey, 1, Carbon::tomorrow()->diffInSeconds(now()));
@@ -109,9 +115,11 @@ class AuthController extends Controller
 
 
         // 保存手机号码与验证码关系
-        Cache::put('register_captcha_'.$mobile, $code, 600);
-
+        Cache::put('register_captcha_' . $mobile, $code, 600);
 
         // 发送短信
+        (new UserServices())->sendCaptchaMsg($mobile, $code);
+
+        return $this->success();
     }
 }
