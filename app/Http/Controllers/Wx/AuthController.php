@@ -93,7 +93,6 @@ class AuthController extends WxController
 
         $code = random_int(10000, 99999);
 
-
         //防刷验证十分钟一次   一天只能请求10次
 
         $lock = Cache::add('register_captcha_lock_' . $mobile, 1, 60);
