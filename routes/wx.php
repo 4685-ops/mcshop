@@ -6,14 +6,15 @@ use App\Http\Controllers\Wx\AuthController;
 # 用户模块-用户
 Route::post('auth/register', [AuthController::class, 'register']);//账号注册
 Route::post('auth/regCaptcha', [AuthController::class, 'regCaptcha']);//注册验证码
+Route::post('auth/login', [AuthController::class, 'login']);//登录
+Route::get('auth/info', [AuthController::class, 'info']); //用户信息
+Route::post('auth/logout', [AuthController::class, 'logout']); //账号登出
+Route::post('auth/reset', [AuthController::class, 'reset']); //账号密码重置
+Route::post('auth/captcha', [AuthController::class, 'regCaptcha']); //验证码
+Route::post('auth/profile', [AuthController::class, 'profile']); //账号修改
 
-//Route::post('auth/login', 'AuthController@login'); //账号登录
-//Route::get('auth/info', 'AuthController@info'); //用户信息
-//Route::post('auth/logout', 'AuthController@logout'); //账号登出
-//Route::post('auth/reset', 'AuthController@reset'); //账号密码重置
-//Route::post('auth/captcha', 'AuthController@regCaptcha'); //验证码
-//Route::post('auth/profile', 'AuthController@profile'); //账号修改
-//
+
+
 //# 用户模块-地址
 //Route::get('address/list', 'AddressController@list'); //收货地址列表
 //Route::get('address/detail', 'AddressController@detail'); //收货地址详情
