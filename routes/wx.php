@@ -1,9 +1,11 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Wx\AddressController;
+use App\Http\Controllers\Wx\CatalogController;
 use App\Http\Controllers\Wx\AuthController;
 
-# 用户模块-用户
+//# 用户模块-用户
 Route::post('auth/register', [AuthController::class, 'register']);//账号注册
 Route::post('auth/regCaptcha', [AuthController::class, 'regCaptcha']);//注册验证码
 Route::post('auth/login', [AuthController::class, 'login']);//登录
@@ -13,18 +15,18 @@ Route::post('auth/reset', [AuthController::class, 'reset']); //账号密码重�
 Route::post('auth/captcha', [AuthController::class, 'regCaptcha']); //验证码
 Route::post('auth/profile', [AuthController::class, 'profile']); //账号修改
 
-
-
 //# 用户模块-地址
-//Route::get('address/list', 'AddressController@list'); //收货地址列表
-//Route::get('address/detail', 'AddressController@detail'); //收货地址详情
-//Route::post('address/save', 'AddressController@save'); //保存收货地址
-//Route::post('address/delete', 'AddressController@delete'); //删除收货地址
-//
+Route::get('address/list', [AddressController::class, 'list']); //收货地址列表
+Route::get('address/detail', [AddressController::class, 'detail']); //收货地址详情
+Route::post('address/save', [AddressController::class, 'save']); //保存收货地址
+Route::post('address/delete', [AddressController::class, 'delete']); //删除收货地址
+
+
 //# 商品模块-类目
-//Route::get('catalog/index', 'CatalogController@index'); //分类目录全部分类数据接口
-//Route::get('catalog/current', 'CatalogController@current'); //分类目录当前分类数据接口
-//
+Route::get('catalog/index', [CatalogController::class, 'index']); //分类目录全部分类数据接口
+Route::get('catalog/current', [CatalogController::class, 'current']); //分类目录当前分类数据接口
+
+
 //# 商品模块-品牌
 //Route::get('brand/list', 'BrandController@list'); //品牌列表
 //Route::get('brand/detail', 'BrandController@detail'); //品牌详情

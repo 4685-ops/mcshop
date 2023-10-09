@@ -38,4 +38,27 @@ class BaseModel extends Model
         return $this->table ?? Str::snake(class_basename($this));
     }
 
+    /**
+     * area_code -> areaCode
+     *
+     * @return array|false
+     */
+    public function toArray()
+    {
+        $items = parent::toArray();
+        $items = array_filter($items, function ($item) {
+            return !is_null($item);
+        });
+        $keys = array_keys($items);
+        $keys = array_map(function ($key) {
+            return lcfirst(Str::studly($key));
+        }, $keys);
+        $values = array_values($items);
+        return array_combine($keys, $values);
+    }
+
+    public static function new()
+    {
+        return new static();
+    }
 }
