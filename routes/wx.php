@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Wx\BrandController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Wx\AddressController;
 use App\Http\Controllers\Wx\CatalogController;
@@ -28,10 +29,10 @@ Route::get('catalog/current', [CatalogController::class, 'current']); //分类�
 
 
 //# 商品模块-品牌
-//Route::get('brand/list', 'BrandController@list'); //品牌列表
-//Route::get('brand/detail', 'BrandController@detail'); //品牌详情
-//Route::get('brand/detail', [BrandController::class, 'detail']); //品牌详情
-//
+Route::get('brand/list', [BrandController::class, 'list']); //品牌列表
+Route::get('brand/detail', [BrandController::class, 'detail']); //品牌详情
+
+
 //# 商品模块-商品
 //Route::get('goods/count', 'GoodsController@count'); //统计商品总数
 //Route::get('goods/category', 'GoodsController@category'); //根据分类获取商品列表数据
