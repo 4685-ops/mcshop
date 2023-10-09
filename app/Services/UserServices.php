@@ -58,9 +58,6 @@ class UserServices extends BaseServices
      */
     public function checkCaptcha(string $mobile, string $code): bool
     {
-        if (!app()->environment('production')) {
-            return true;
-        }
 
         $key = "register_captcha_".$mobile;
         $isPass = $code === Cache::get($key);
@@ -78,6 +75,10 @@ class UserServices extends BaseServices
     public function setCaptcha(string $mobile): string
     {
         $code = random_int(10000, 99999);
+        if (!app()->environment('production')) {
+            $code = "111111";
+        }
+
         $code = strval($code);
         // 保存手机号码与验证码关系
         Cache::put('register_captcha_'.$mobile, $code, 600);
