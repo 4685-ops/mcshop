@@ -20,4 +20,9 @@ class CategoryServices extends BaseServices
     {
         return Category::query()->where('deleted', 0)->where('level', 'L1')->where('id', $id)->first();
     }
+
+    public function getCategory(int $id)
+    {
+        return Category::query()->find($id);
+    }
 }

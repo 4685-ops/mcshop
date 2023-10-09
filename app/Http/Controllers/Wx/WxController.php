@@ -45,6 +45,11 @@ class WxController extends Controller
         return $this->user()->id;
     }
 
+    public function isLogin(): bool
+    {
+        return (bool)$this->userId();
+    }
+
     protected function fail(array $codeResponse = CodeResponse::FAIL, $info = ''): \Illuminate\Http\JsonResponse
     {
         return $this->codeReturn($codeResponse, null, $info);

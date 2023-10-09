@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Wx\BrandController;
+use App\Http\Controllers\Wx\GoodsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Wx\AddressController;
 use App\Http\Controllers\Wx\CatalogController;
@@ -34,10 +35,11 @@ Route::get('brand/detail', [BrandController::class, 'detail']); //品牌详情
 
 
 //# 商品模块-商品
-//Route::get('goods/count', 'GoodsController@count'); //统计商品总数
-//Route::get('goods/category', 'GoodsController@category'); //根据分类获取商品列表数据
-//Route::get('goods/list', 'GoodsController@list'); //获得商品列表
-//Route::get('goods/detail', 'GoodsController@detail'); //获得商品的详情
+Route::get('goods/count', [GoodsController::class, 'count']); //统计商品总数
+Route::get('goods/category', [GoodsController::class, 'category']); //根据分类获取商品列表数据
+Route::get('goods/list', [GoodsController::class, 'list']); //获得商品列表
+Route::get('goods/detail', [GoodsController::class, 'detail']); //获得商品的详情
+
 //
 //# 营销模块-优惠券
 //Route::get('coupon/list', 'CouponController@list'); //优惠券列表

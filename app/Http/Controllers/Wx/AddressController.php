@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Wx;
 use App\Exceptions\BusinessException;
 use App\Inputs\AddressInput;
 use App\Services\AddressServices;
-use Illuminate\Http\Request;
 
 class AddressController extends WxController
 {
