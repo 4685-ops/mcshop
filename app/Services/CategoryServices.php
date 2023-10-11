@@ -25,4 +25,11 @@ class CategoryServices extends BaseServices
     {
         return Category::query()->find($id);
     }
+
+    public function getL2ListByIds($categoryIds)
+    {
+        return Category::query()->where('deleted', 0)->where('level', 'L2')
+            ->whereIn('id', $categoryIds)
+            ->get();
+    }
 }

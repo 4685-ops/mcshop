@@ -42,7 +42,11 @@ class WxController extends Controller
 
     public function userId()
     {
-        return $this->user()->id;
+        try {
+            return $this->user()->id;
+        } catch (\Throwable $e) {
+            return false;
+        }
     }
 
     public function isLogin(): bool

@@ -86,4 +86,9 @@ class UserServices extends BaseServices
         return $code;
     }
 
+    public function getUsers(array $userIds)
+    {
+        return User::query()->whereIn('id', $userIds)->where('deleted', 0)->get();
+    }
+
 }
