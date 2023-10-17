@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Wx\BrandController;
+use App\Http\Controllers\Wx\CouponController;
 use App\Http\Controllers\Wx\GoodsController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Wx\AddressController;
@@ -40,12 +41,11 @@ Route::get('goods/category', [GoodsController::class, 'category']); //根据分�
 Route::get('goods/list', [GoodsController::class, 'list']); //获得商品列表
 Route::get('goods/detail', [GoodsController::class, 'detail']); //获得商品的详情
 
-//
 //# 营销模块-优惠券
-//Route::get('coupon/list', 'CouponController@list'); //优惠券列表
-//Route::get('coupon/mylist', 'CouponController@mylist'); //我的优惠券列表
-//Route::post('coupon/receive', 'CouponController@receive'); //优惠券领取
-//#Route::any('coupon/selectlist', ''); //当前订单可用优惠券列表
+Route::get('coupon/list', [CouponController::class, 'list']); //优惠券列表
+Route::get('coupon/mylist', [CouponController::class, 'mylist']); //我的优惠券列表
+Route::post('coupon/receive', [CouponController::class, 'receive']); //优惠券领取
+//Route::any('coupon/selectlist', ''); //当前订单可用优惠券列表
 //
 //# 营销模块-团购
 //Route::get('groupon/list', 'GrouponController@list'); //团购列表
